@@ -11,8 +11,13 @@ func main() {
 	var (
 		port *int = flag.Int("p", 8000, "Select a port to run the service")
 		run *bool = flag.Bool("s", false, "Run the service (Mandatory)")
+		migrate *bool = flag.Bool("M", false, "Make the migration")
 	)
 	flag.Parse()
+
+	if *migrate {
+		database.MigrateDB()
+	}
 
 	if *run {
 		fmt.Println("[*] Service is running in the port " + strconv.Itoa(*port))
