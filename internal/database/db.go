@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm/sqlite"
 )
 
+
 func MigrateDB(db *gorm.DB) error {
 	var err error
 
@@ -14,4 +15,9 @@ func MigrateDB(db *gorm.DB) error {
 	}
 
 	return nil
+}
+
+
+func ConnectDB(dbName string) (*gorm.DB, error) {
+	
 }
