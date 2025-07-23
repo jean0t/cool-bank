@@ -2,7 +2,7 @@ package database
 
 import (
 	"gorm.io/gorm"
-	"gorm.io/gorm/sqlite"
+	"gorm.io/driver/sqlite"
 )
 
 
