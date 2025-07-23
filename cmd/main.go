@@ -4,7 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"strconv"
+	"net/http"
+	
+	"github.com/jean0t/cool-bank/internal/route"
 )
+
 
 
 func main() {
@@ -16,10 +20,12 @@ func main() {
 	flag.Parse()
 
 	if *migrate {
-		database.MigrateDB()
+		//database.MigrateDB()
 	}
 
 	if *run {
+		var router *http.ServeMux = route.CreateRouter()
 		fmt.Println("[*] Service is running in the port " + strconv.Itoa(*port))
+		http.ListenAndServe(":9999", router)
 	}
 }
