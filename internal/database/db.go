@@ -19,5 +19,16 @@ func MigrateDB(db *gorm.DB) error {
 
 
 func ConnectDB(dbName string) (*gorm.DB, error) {
-	
+	var (
+		db *gorm.DB
+		driver gorm.Dialector
+		err error
+	)
+	driver = sqlite.Open(dbName)
+	db, err = gorm.Open(driver, &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
