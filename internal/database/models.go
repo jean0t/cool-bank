@@ -12,10 +12,12 @@ type Account struct {
 }
 
 
-type Operations struct {
+type Operation struct {
 	gorm.Model
-	Value string `gorm:"not null"`
-	From Account `gorm:"not null"`
-	To Account `gorm:"not null"`
+	Value float64 `gorm:"not null"`
+	FromID uint `gorm:"not null"`
+	From Account `gorm:"foreignKey:FromID"`
+	ToID uint `gorm:"not null"`
+	To Account `gorm:"foreignKey:ToID"`
 	Operation string `gorm:"not null"`
 }
