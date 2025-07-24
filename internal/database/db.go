@@ -9,7 +9,7 @@ import (
 func MigrateDB(db *gorm.DB) error {
 	var err error
 
-	err = db.AutoMigrate(&Account{}, &Operations{})
+	err = db.AutoMigrate(&Account{}, &Operation{})
 	if err != nil {
 		return err
 	}
@@ -24,7 +24,7 @@ func ConnectDB(dbName string) (*gorm.DB, error) {
 		driver gorm.Dialector
 		err error
 	)
-	driver = sqlite.Open(dbName)
+	driver = sqlite.Open(dbName + "?_foreign_keys=on")
 	db, err = gorm.Open(driver, &gorm.Config{})
 	if err != nil {
 		return nil, err
