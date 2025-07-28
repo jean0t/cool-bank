@@ -30,7 +30,7 @@ func CreateUser(db *gorm.DB, username, password, role string) error {
 
 	// create the user
 	hashed = fmt.Sprintf("%x", hashedPassword)
-	user = User{Username: username, Password: hashed, Role, role}
+	user = User{Username: username, Password: hashed, Role: role}
 	err = gorm.G[User](db).Create(ctx, &user)
 
 	return err
@@ -49,6 +49,6 @@ func VerifyUser(db *gorm.DB, username, password string) error {
 		return err
 	}
 
-	err = bcrypt.CompareHashAndPassword(user.Password, []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	return err
 }
