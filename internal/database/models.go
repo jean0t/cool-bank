@@ -25,7 +25,6 @@ type Account struct {
 	gorm.Model
 	UserID uint `gorm:"not null"`
 	Owner User `gorm:"foreignKey:UserID"`
-	AccountCode string `gorm:"uniqueIndex;not null;size:6"`
 	ValueOwned float64 `gorm:"not null"`
 }
 
