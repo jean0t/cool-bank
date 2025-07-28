@@ -1,9 +1,8 @@
 package authentication
 
 import (
-	"os"
+	"fmt"
 	"time"
-	"net/http"
 	"crypto/rsa"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -22,30 +21,28 @@ type Claims struct {
 
 //==========================================| Funtions
 
-func CreateCookie(name, role string, expiration time.Time, pathPrivateKey) (string, error) {
+func CreateCookie(name, role string, expiration time.Duration, pathPrivateKey string) (string, error) {
 	var (
 		err error
-		signedToken string
 		claims *Claims
+		tokenString string
 		token *jwt.Token
-		CookieContextKey contextKey
 		privateKey *rsa.PrivateKey
 		
 		now time.Time
 	)
 
 	now = time.Now()
-	CookieContextKey = contextKey(os.Getenv("CONTEXT_KEY"))
 	claims = &Claims{
 			Name: name,
 			Role: role,
-			RegistedClaims: jwt.RegisteredClaims{
+			RegisteredClaims: jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(now.Add(expiration)),
 				IssuedAt: jwt.NewNumericDate(now),
 				},
 			}
 	
-	privateKey, err = loadPrivateKey(pathPrivateKey)
+	privateKey, err = LoadPrivateKey(pathPrivateKey)
 	if err != nil {
 		return "", err
 	}
@@ -66,10 +63,9 @@ func VerifyCookie(tokenString, pathPublicKey string) bool {
 		ok, isValid bool
 		publicKey *rsa.PublicKey
 		token *jwt.Token
-		claims &Claims
 	)
 
-	publicKey, err = loadPublicKey(pathPublicKey)
+	publicKey, err = LoadPublicKey(pathPublicKey)
 	if err != nil {
 		fmt.Println("[!] Error loading RSA Public Key")
 		return false
@@ -79,7 +75,7 @@ func VerifyCookie(tokenString, pathPublicKey string) bool {
 		return publicKey, nil
 	})
 
-	if claims, ok = token.Claims.(*Claims); ok && token.Valid {
+	if _, ok = token.Claims.(*Claims); ok && token.Valid {
 		isValid = true
 	} else {
 		isValid =  false
