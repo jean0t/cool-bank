@@ -1,10 +1,13 @@
 module github.com/jean0t/cool-bank
 
-go 1.22.2
+go 1.23.0
+
+toolchain go1.23.11
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.2.3
 	github.com/spf13/cobra v1.9.1
+	golang.org/x/crypto v0.40.0
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.30.0
 )
@@ -15,5 +18,5 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
-	golang.org/x/text v0.20.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 )

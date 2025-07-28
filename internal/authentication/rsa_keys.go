@@ -8,7 +8,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func loadPrivateKey(path string) (*rsa.PrivateKey, error) {
+
+func LoadPrivateKey(path string) (*rsa.PrivateKey, error) {
 	var (
 		err error
 		file *os.File
@@ -38,7 +39,8 @@ func loadPrivateKey(path string) (*rsa.PrivateKey, error) {
 	return privateKey, nil
 }
 
-func loadPublicKey(path string) (*rsa.PublicKey, error) {
+
+func LoadPublicKey(path string) (*rsa.PublicKey, error) {
 	var (
 		err error
 		file *os.File
@@ -59,7 +61,7 @@ func loadPublicKey(path string) (*rsa.PublicKey, error) {
 		return nil, err
 	}
 
-	publicKey, err = jwt.ParseRSAPublicKeyFromREM(keyData)
+	publicKey, err = jwt.ParseRSAPublicKeyFromPEM(keyData)
 	if err != nil {
 		fmt.Println("[!] Error parsing RSA Public Key.")
 		return nil, err
