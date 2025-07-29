@@ -2,8 +2,6 @@ package route
 
 import (
 	"net/http"
-	"crypto/rsa"
-	
 	"fmt"
 
 	"github.com/jean0t/cool-bank/internal/authentication"
