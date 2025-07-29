@@ -3,6 +3,9 @@ package route
 import (
 	"net/http"
 	"fmt"
+
+	"github.com/jean0t/cool-bank/internal/authentication"
+	"github.com/jean0t/cool-bank/internal/route/handler"
 )
 
 
@@ -36,13 +39,31 @@ func registerHandlers() *Handler {
 }
 
 
-func CreateRouter() *http.ServeMux {
+func CreateRouter(publicKeyPath, privateKeyPath string) *http.ServeMux {
 	var (
 		handler *Handler = registerHandlers()
 		router *http.ServeMux = http.NewServeMux() 
 	)
 
-	router.HandleFunc("/", handler.GetHandler("/"))
+	// account routes
+	router.HandleFunc("/account", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/account/", http.StatusMovedPermanently)
+	})
+	router.Handle("/account/", authentication.AuthMiddleware(publicKey)(handler.AccountHandler))
+
+	// manager routes
+	router.HandleFunc("/admin", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/admin/", http.StatusMovedPermanently)
+	})
+	router.Handle("/admin/", authentication.AuthMiddleware(publicKey)(authentication.ManagerOnly(handler.AdminHandler)))
+
+
+	// authentication routes
+	router.HandleFunc("/auth", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/auth/", http.StatusMovedPermanently)
+	})
+	router.Handle("/auth/", handler.AuthenticationHandler(privateKeyPath))
+
 
 	return router
 }

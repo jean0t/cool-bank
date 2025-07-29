@@ -9,7 +9,7 @@ import (
 )
 
 
-func LoadPrivateKey(path string) (*rsa.PrivateKey, error) {
+func loadPrivateKey(path string) (*rsa.PrivateKey, error) {
 	var (
 		err error
 		file *os.File
@@ -40,7 +40,7 @@ func LoadPrivateKey(path string) (*rsa.PrivateKey, error) {
 }
 
 
-func LoadPublicKey(path string) (*rsa.PublicKey, error) {
+func loadPublicKey(path string) (*rsa.PublicKey, error) {
 	var (
 		err error
 		file *os.File

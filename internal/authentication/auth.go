@@ -21,7 +21,7 @@ type Claims struct {
 
 //==========================================| Funtions
 
-func CreateCookie(name, role string, expiration time.Duration, pathPrivateKey string) (string, error) {
+func CreateJWT(name, role string, expiration time.Duration, pathPrivateKey string) (string, error) {
 	var (
 		err error
 		claims *Claims
@@ -42,7 +42,7 @@ func CreateCookie(name, role string, expiration time.Duration, pathPrivateKey st
 				},
 			}
 	
-	privateKey, err = LoadPrivateKey(pathPrivateKey)
+	privateKey, err = loadPrivateKey(pathPrivateKey)
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +57,7 @@ func CreateCookie(name, role string, expiration time.Duration, pathPrivateKey st
 }
 
 
-func VerifyCookie(tokenString, pathPublicKey string) bool {
+func VerifyJWT(tokenString, pathPublicKey string) bool {
 	var (
 		err error
 		ok, isValid bool
@@ -65,7 +65,7 @@ func VerifyCookie(tokenString, pathPublicKey string) bool {
 		token *jwt.Token
 	)
 
-	publicKey, err = LoadPublicKey(pathPublicKey)
+	publicKey, err = loadPublicKey(pathPublicKey)
 	if err != nil {
 		fmt.Println("[!] Error loading RSA Public Key")
 		return false
