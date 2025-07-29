@@ -41,7 +41,7 @@ func registerHandlers() *Handler {
 }
 
 
-func CreateRouter(publicKey *rsa.PublicKey) *http.ServeMux {
+func CreateRouter(publicKeyPath, privateKeyPath string) *http.ServeMux {
 	var (
 		handler *Handler = registerHandlers()
 		router *http.ServeMux = http.NewServeMux() 
@@ -64,7 +64,8 @@ func CreateRouter(publicKey *rsa.PublicKey) *http.ServeMux {
 	router.HandleFunc("/auth", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/auth/", http.StatusMovedPermanently)
 	})
-	router.Handle("/auth/", handler.AuthenticationHandler)
+	router.Handle("/auth/", handler.AuthenticationHandler(privateKeyPath))
+
 
 	return router
 }
