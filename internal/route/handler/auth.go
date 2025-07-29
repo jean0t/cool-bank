@@ -5,6 +5,6 @@ import (
 )
 
 
-func AuthenticationHandler(privateKeyPath strin) http.HandlerFunc {
+func AuthenticationHandler(privateKeyPath string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {}
 }
