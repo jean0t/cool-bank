@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"fmt"
 	"strings"
 	"context"
 	"net/http"
@@ -9,7 +10,17 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func AuthMiddleware(publicKey *rsa.PublicKey) func(http.HandlerFunc) http.HandlerFunc {
+func AuthMiddleware(publicKeyPath string) func(http.HandlerFunc) http.HandlerFunc {
+	var (
+		publicKey *rsa.PublicKey
+		err error
+	)
+
+	publicKey, err = loadPublicKey(publicKeyPath)
+	if err != nil {
+		fmt.Println("[*] error loading public key for rsa")
+	}
+	
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			var (
@@ -18,8 +29,6 @@ func AuthMiddleware(publicKey *rsa.PublicKey) func(http.HandlerFunc) http.Handle
 				ok bool
 				ctx context.Context
 				token *jwt.Token
-				err error
-
 			)
 
 			authHeader = r.Header.Get("Authorization")
@@ -49,4 +58,22 @@ func AuthMiddleware(publicKey *rsa.PublicKey) func(http.HandlerFunc) http.Handle
 			next(w, r.WithContext(ctx))
 		}
 	}
+}
+
+
+func ManagerOnly(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var (
+			ok bool
+			claims *Claims
+		)
+
+		claims, ok = r.Context().Value("userClaims").(*Claims)
+		if !ok || claims.Role != "manager" {
+			http.Error(w, "Forbidden: Only Managers", http.StatusForbidden)
+			return
+		}
+
+		next(w, r)
+	}	
 }

@@ -2,7 +2,6 @@ package route
 
 import (
 	"net/http"
-	"fmt"
 
 	"github.com/jean0t/cool-bank/internal/authentication"
 	"github.com/jean0t/cool-bank/internal/route/handler"
@@ -21,27 +20,41 @@ func (h *Handler) AddHandler(path string, handlerFunc http.HandlerFunc) {
 }
 
 func (h *Handler) GetHandler(path string) http.HandlerFunc {
-	return h.handlers[path]
+	var (
+		function http.HandlerFunc
+		ok bool
+	)
+
+	function, ok = h.handlers[path]
+	if !ok {
+		var not_found = func(w http.ResponseWriter, r *http.Request) {
+			http.Error(w, "Not Found", http.StatusNotFound)	
+		}
+
+		return not_found
+	}
+
+	return function
 }
 
 
 
 //=======================================================================| Router
 
-func registerHandlers() *Handler {
-	var handler *Handler = &Handler{handlers: map[string]http.HandlerFunc{}}
+func registerHandlers(publicKeyPath, privateKeyPath string) *Handler {
+	var handlers *Handler = &Handler{handlers: map[string]http.HandlerFunc{}}
 
-	handler.AddHandler("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html")
-		fmt.Fprintf(w, "<h1>Apenas um teste</h1>")
-	})
-	return handler
+	handlers.AddHandler("/account/", authentication.AuthMiddleware(publicKeyPath)(handler.AccountHandler))
+	handlers.AddHandler("/admin/", authentication.AuthMiddleware(publicKeyPath)(authentication.ManagerOnly(handler.AdminHandler)))
+	handlers.AddHandler("/auth/", handler.AuthenticationHandler(privateKeyPath))
+
+	return handlers
 }
 
 
 func CreateRouter(publicKeyPath, privateKeyPath string) *http.ServeMux {
 	var (
-		handler *Handler = registerHandlers()
+		handlers *Handler = registerHandlers(publicKeyPath, privateKeyPath)
 		router *http.ServeMux = http.NewServeMux() 
 	)
 
@@ -49,20 +62,20 @@ func CreateRouter(publicKeyPath, privateKeyPath string) *http.ServeMux {
 	router.HandleFunc("/account", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/account/", http.StatusMovedPermanently)
 	})
-	router.Handle("/account/", authentication.AuthMiddleware(publicKey)(handler.AccountHandler))
+	router.Handle("/account/", handlers.GetHandler("/account/"))
 
 	// manager routes
 	router.HandleFunc("/admin", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin/", http.StatusMovedPermanently)
 	})
-	router.Handle("/admin/", authentication.AuthMiddleware(publicKey)(authentication.ManagerOnly(handler.AdminHandler)))
+	router.Handle("/admin/", handlers.GetHandler("/admin/"))
 
 
 	// authentication routes
 	router.HandleFunc("/auth", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/auth/", http.StatusMovedPermanently)
 	})
-	router.Handle("/auth/", handler.AuthenticationHandler(privateKeyPath))
+	router.Handle("/auth/", handlers.GetHandler("/auth/"))
 
 
 	return router
