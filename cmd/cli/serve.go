@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/jean0t/cool-bank/internal/route"
-	"github.com/jean0t/cool-bank/internal/authentication"
 
 	"github.com/spf13/cobra"
 )
@@ -21,7 +20,7 @@ var serveCmd = &cobra.Command{
 	Use: "serve",
 	Aliases: []string{"s"},
 	Short: "Start the API",
-	PreRun: func (cmd *cobra.Command, args []string) {
+	PreRunE: func (cmd *cobra.Command, args []string) error {
 		// public_key.pem and private_key.pem must be provided
 		if publicKey == "" {
 			return errors.New("public_key.pem is mandatory. Use --public-key or -k to provide it.")
