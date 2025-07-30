@@ -30,6 +30,7 @@ var serveCmd = &cobra.Command{
 		}
 
 		router = route.CreateRouter(publicKey, privateKey)
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
