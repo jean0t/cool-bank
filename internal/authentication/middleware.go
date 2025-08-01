@@ -77,3 +77,21 @@ func ManagerOnly(next http.HandlerFunc) http.HandlerFunc {
 		next(w, r)
 	}	
 }
+
+
+func UserOnly(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var (
+			ok bool
+			claims *Claims
+		)
+
+		claims, ok = r.Context().Value("userClaims").(*Claims)
+		if !ok || claims.Role != "user" {
+			http.Error(w, "Forbidden: Only Users", http.StatusForbidden)
+			return
+		}
+
+		next(w, r)
+	}	
+}
