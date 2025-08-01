@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	publicKey, privateKey, port, databaseName string
+	PublicKey, PrivateKey, port, databaseName string
 	ctx context.Context
 	cancel context.CancelFunc
 	router *http.ServeMux
@@ -36,7 +36,7 @@ var serveCmd = &cobra.Command{
 			return errors.New("private_key.pem is mandatory. Use --private-key or -i to provide it.")
 		}
 
-		router = route.CreateRouter(publicKey, privateKey)
+		router = route.CreateRouter(PublicKey, PrivateKey)
 		db, err = database.ConnectDB(databaseName)
 		return nil
 
@@ -75,8 +75,8 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	serveCmd.Flags().StringVarP(&port, "port", "p", "9696", "Port that the server will use to listen to requests")
-	serveCmd.Flags().StringVarP(&publicKey, "public-key", "k", "", "Path to the public_key.pem file (mandatory)")
-	serveCmd.Flags().StringVarP(&privateKey, "private-key", "i", "", "Path to the private_key.pem file (mandatory)")
+	serveCmd.Flags().StringVarP(&PublicKey, "public-key", "k", "", "Path to the public_key.pem file (mandatory)")
+	serveCmd.Flags().StringVarP(&PrivateKey, "private-key", "i", "", "Path to the private_key.pem file (mandatory)")
 	serveCmd.Flags().StringVarP(&databaseName, "database-name", "d", "bank.db", "Name of the database file")
 
 	serveCmd.MarkFlagRequired("public-key")

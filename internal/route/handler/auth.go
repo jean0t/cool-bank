@@ -2,6 +2,8 @@ package handler
 
 import (
 	"net/http"
+
+	"github.com/jean0t/cool-bank/internal/controller"
 )
 
 
@@ -10,10 +12,10 @@ func AuthenticationHandler(privateKeyPath string) http.HandlerFunc {
 
 		switch r.URL.Path {
 			case "/auth/login", "/auth/login/":
-				http.Error(w, "Not implemented", http.StatusNoContent)
+				return controller.Login(w, r)
 
 			case "/auth/register", "/auth/register/":
-				http.Error(w, "Not implemented", http.StatusNoContent)
+				return controller.Register(w, r)
 
 			case "/auth/":
 				http.Error(w, "Bad Request, Try /auth/login or /auth/register", http.StatusBadRequest)
